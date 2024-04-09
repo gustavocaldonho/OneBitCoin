@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     width: "36%",
     height: "100%",
     alignItems: "flex-start",
+    paddingTop: 2,
   },
   boxLogo: {
     flexDirection: "row",
