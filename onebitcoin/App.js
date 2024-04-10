@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, StatusBar, SafeAreaView, Platform } from "react-native";
 
 import CurrentPrice from "./src/components/CurrentPrice";
@@ -19,12 +19,11 @@ function url(qtdDays) {
   const end_date = `${date.getFullYear()}-${addZero(
     date.getMonth() + 1
   )}-${addZero(date.getDate())}`;
-  date.setDate(data.getDate() - listLastDays); //voltando alguns dias (passados como parâmetro)
+  date.setDate(date.getDate() - listLastDays); //voltando alguns dias (passados como parâmetro)
   const start_date = `${date.getFullYear()}-${addZero(
     date.getMonth() + 1
   )}-${addZero(date.getDate())}`;
-  return `https://api.coindesk.com/v1/bpi/historical/close.json?start=${start_date}&${(end =
-    end_date)}`;
+  return `https://api.coindesk.com/v1/bpi/historical/close.json?start=${start_date}&end=${end_date}`;
 }
 
 async function getListCoins(url) {
@@ -48,19 +47,44 @@ async function getPriceCoinsGraphic(url) {
   const queryCoinsList = Object.keys(selectListQuotationsG).map(
     (key) => selectListQuotationsG[key]
   );
-  let dataG = queryCoinsList.reverse();
+  let dataG = queryCoinsList;
   return dataG;
 }
 
 export default function App() {
+  const [coinsList, setCoinsList] = useState([]);
+  const [coinsGraphicList, setCoinsGraphicList] = useState([0]);
+  const [days, setDays] = useState(30);
+  const [updateData, setUpdateData] = useState(true);
+
+  function updateDay(number) {
+    setDays(number);
+    setUpdateData(true);
+    console.log(number);
+    // console.log(days);
+  }
+
+  useEffect(() => {
+    getListCoins(url(days)).then((data) => {
+      setCoinsList(data);
+    });
+    getPriceCoinsGraphic(url(days)).then((dataG) => {
+      setCoinsGraphicList(dataG);
+    });
+    // Prevenindo o loop infinito
+    if (updateData) {
+      setUpdateData(false);
+    }
+  }, [updateData]);
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Onde fica as informações de wi-fi, bateria e hora na parte superior da tela */}
       <StatusBar backgroundColor="#f50d41" barStyle="dark-content" />
       <CurrentPrice />
       <HistoryGraphic />
-      <QuotationsList />
-      <QuotationsItems />
+      <QuotationsList filterDay={updateDay} listTransactions={coinsList} />
+      {/* <QuotationsItems /> */}
     </SafeAreaView>
   );
 }
