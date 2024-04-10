@@ -5,8 +5,8 @@ import styles from "./styles";
 
 export default function HistoryGraphic(props) {
   return (
-    <View>
-      <LineChart
+    <View style={styles.contentGraphic}>
+      {/* <LineChart
         data={{ datasets: [{ data: props.infoDataGraphic }] }}
         width={Dimensions.get("window").width}
         height={220}
@@ -29,7 +29,7 @@ export default function HistoryGraphic(props) {
           },
         }}
         bezier
-      />
+      /> */}
     </View>
   );
 }

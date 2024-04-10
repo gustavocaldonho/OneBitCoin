@@ -55,12 +55,17 @@ export default function App() {
   const [coinsGraphicList, setCoinsGraphicList] = useState([0]);
   const [days, setDays] = useState(30);
   const [updateData, setUpdateData] = useState(true);
+  const [price, setPrice] = useState();
 
   function updateDay(number) {
     setDays(number);
     setUpdateData(true);
     console.log(number);
     // console.log(days);
+  }
+
+  function priceCotation() {
+    setPrice(coinsGraphicList.pop());
   }
 
   useEffect(() => {
@@ -70,6 +75,7 @@ export default function App() {
     getPriceCoinsGraphic(url(days)).then((dataG) => {
       setCoinsGraphicList(dataG);
     });
+    priceCotation();
     // Prevenindo o loop infinito
     if (updateData) {
       setUpdateData(false);
@@ -80,7 +86,7 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       {/* Onde fica as informações de wi-fi, bateria e hora na parte superior da tela */}
       <StatusBar backgroundColor="#f50d41" barStyle="dark-content" />
-      <CurrentPrice />
+      <CurrentPrice lastCotation={price} />
       <HistoryGraphic infoDataGraphic={coinsGraphicList} />
       <QuotationsList filterDay={updateDay} listTransactions={coinsList} />
     </SafeAreaView>
